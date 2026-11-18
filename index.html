@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#F8E7EE">
+  <title>Устный счёт</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="blob blob-a"></div>
+  <div class="blob blob-b"></div>
+  <div class="blob blob-c"></div>
+
+  <div class="scene" aria-hidden="true">
+    <svg class="bow-a" viewBox="0 0 80 48"><use href="#bow"></use></svg>
+    <svg class="bow-b" viewBox="0 0 80 48"><use href="#bow"></use></svg>
+    <svg class="bow-c" viewBox="0 0 80 48"><use href="#bow"></use></svg>
+    <svg class="bow-d" viewBox="0 0 80 48"><use href="#bow"></use></svg>
+    <svg class="cat-a" viewBox="0 0 200 180"><use href="#cat"></use></svg>
+    <svg class="cat-b" viewBox="0 0 200 180"><use href="#cat"></use></svg>
+  </div>
+
+  <svg width="0" height="0" aria-hidden="true" style="position:absolute">
+    <defs>
+      <symbol id="bow" viewBox="0 0 80 48">
+        <path d="M40 24c0 0-12-16-28-12-7 2-6 14 4 16-9 4-7 16 6 12 8-3 18-12 18-16z" fill="#F4B7CB"/>
+        <path d="M40 24c0 0 12-16 28-12 7 2 6 14-4 16 9 4 7 16-6 12-8-3-18-12-18-16z" fill="#EEA3BE"/>
+        <path d="M40 22c-3 5-3 10 0 15 3-5 3-10 0-15z" fill="#E184A4"/>
+        <circle cx="40" cy="25" r="4.5" fill="#D86B90"/>
+      </symbol>
+      <symbol id="cat" viewBox="0 0 200 180">
+        <path d="M146 118c22 2 28-24 16-36" fill="none" stroke="#E8A48C" stroke-width="10" stroke-linecap="round"/>
+        <ellipse cx="112" cy="124" rx="46" ry="30" fill="#F4B89A"/>
+        <path d="M58 64 48 22l36 28z" fill="#F4B89A"/>
+        <path d="M118 60l18-36-8 40z" fill="#F4B89A"/>
+        <path d="M62 58 54 32l24 16z" fill="#F7A3C2"/>
+        <path d="M120 56l12-22-8 24z" fill="#F7A3C2"/>
+        <ellipse cx="92" cy="78" rx="48" ry="42" fill="#F4B89A"/>
+        <path d="M112 46c0 0-6-14-18-12-4 1-4 8 2 10-5 2-4 9 3 8 4-1 13-5 13-6z" fill="#F4B7CB"/>
+        <path d="M112 46c0 0 8-12 18-9 5 1 4 8-1 10 5 2 4 8-2 8-5-1-15-7-15-9z" fill="#EEA3BE"/>
+        <circle cx="113" cy="47" r="3.4" fill="#D86B90"/>
+        <ellipse cx="74" cy="80" rx="5.2" ry="6.6" fill="#5C4452"/>
+        <ellipse cx="106" cy="78" rx="5.2" ry="6.6" fill="#5C4452"/>
+        <circle cx="72.4" cy="78" r="1.7" fill="#fff"/>
+        <circle cx="104.4" cy="76" r="1.7" fill="#fff"/>
+        <ellipse cx="64" cy="90" rx="7" ry="3.4" fill="#F48FB0"/>
+        <ellipse cx="116" cy="88" rx="7" ry="3.4" fill="#F48FB0"/>
+        <path d="M84.4 89.6h11.2L90 96.8z" fill="#E36B92"/>
+        <path d="M90 98q-7 7-12 2" fill="none" stroke="#C98498" stroke-width="1.7" stroke-linecap="round"/>
+        <path d="M90 98q7 7 12 2" fill="none" stroke="#C98498" stroke-width="1.7" stroke-linecap="round"/>
+        <path d="M58 84h-12M58 90h-14M60 96h-10" fill="none" stroke="#E7B3C2" stroke-width="1.4" stroke-linecap="round"/>
+        <path d="M122 82h12M124 88h14M122 94h10" fill="none" stroke="#E7B3C2" stroke-width="1.4" stroke-linecap="round"/>
+        <ellipse cx="92" cy="150" rx="14" ry="9" fill="#F4B89A"/>
+        <ellipse cx="122" cy="150" rx="14" ry="9" fill="#F4B89A"/>
+      </symbol>
+    </defs>
+  </svg>
+
+  <button type="button" id="sound" class="sound" aria-label="звук">
+    <svg class="sound-on" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M4 10h3.2L12 6.2v11.6L7.2 14H4z" fill="#C45B73"/>
+      <path d="M15.2 9.2a3.6 3.6 0 0 1 0 5.6" fill="none" stroke="#C45B73" stroke-width="1.7" stroke-linecap="round"/>
+    </svg>
+    <svg class="sound-off" viewBox="0 0 24 24" aria-hidden="true" hidden>
+      <path d="M4 10h3.2L12 6.2v11.6L7.2 14H4z" fill="#C45B73"/>
+      <path d="M16 9.5 20 14.5M20 9.5 16 14.5" fill="none" stroke="#C45B73" stroke-width="1.7" stroke-linecap="round"/>
+    </svg>
+  </button>
+
+  <main class="card">
+    <svg class="card-bow" viewBox="0 0 80 48" aria-hidden="true"><use href="#bow"></use></svg>
+
+    <section id="who">
+      <div class="mascot" aria-hidden="true">
+        <svg viewBox="0 0 200 180"><use href="#cat"></use></svg>
+      </div>
+      <p class="ask">Я Злата?</p>
+      <div class="choices">
+        <button type="button" class="start" id="yes">Да</button>
+        <button type="button" class="start no" id="no">Нет</button>
+      </div>
+    </section>
+
+    <section id="home" hidden>
+      <div class="mascot" aria-hidden="true">
+        <svg viewBox="0 0 200 180"><use href="#cat"></use></svg>
+      </div>
+      <button type="button" class="start" id="start">
+        <svg class="inline-bow" viewBox="0 0 80 48" aria-hidden="true"><use href="#bow"></use></svg>
+        Начать тренировку
+      </button>
+      <div id="home-chart" class="chart" hidden></div>
+    </section>
+
+    <section id="count" hidden>
+      <div class="count-wrap">
+        <div id="count-num" class="count-num">3</div>
+      </div>
+    </section>
+
+    <section id="play" hidden>
+      <header class="hud">
+        <div class="pill time" id="time-pill">
+          <small>время</small>
+          <strong id="time">1:00</strong>
+        </div>
+        <div class="pill ok">
+          <small>верно</small>
+          <strong id="ok">0</strong>
+        </div>
+        <div class="pill bad">
+          <small>неверно</small>
+          <strong id="bad">0</strong>
+        </div>
+      </header>
+      <div class="stage" id="stage">
+        <div id="stamp" class="stamp" hidden>
+          <svg class="good-cat" viewBox="0 0 64 64" aria-hidden="true">
+            <ellipse cx="32" cy="36" rx="22" ry="20" fill="#F4B89A"/>
+            <path d="M16 28 14 12l14 12z" fill="#F4B89A"/>
+            <path d="M48 28l2-16-14 12z" fill="#F4B89A"/>
+            <path d="M18 26l-1-10 8 8z" fill="#F7A3C2"/>
+            <path d="M46 26l1-10-8 8z" fill="#F7A3C2"/>
+            <path d="M44 18c0 0-3-8-9-7-2 .5-2 4 1 5-3 1-2 5 2 4 2-.5 6-2 6-2z" fill="#F4B7CB"/>
+            <path d="M44 18c0 0 4-7 9-5 2 .6 2 4 0 5 3 1 2 4-1 4-2-.4-8-3-8-4z" fill="#EEA3BE"/>
+            <circle cx="44.5" cy="18.5" r="2" fill="#D86B90"/>
+            <ellipse cx="24" cy="36" rx="2.4" ry="3.2" fill="#5C4452"/>
+            <ellipse cx="38" cy="36" rx="2.4" ry="3.2" fill="#5C4452"/>
+            <path d="M31 42q-4 4-7 1" fill="none" stroke="#C98498" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M31 42q4 4 7 1" fill="none" stroke="#C98498" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <svg class="bad-cat" viewBox="0 0 64 64" aria-hidden="true">
+            <ellipse cx="32" cy="36" rx="22" ry="20" fill="#F4B89A"/>
+            <path d="M16 28 14 12l14 12z" fill="#F4B89A"/>
+            <path d="M48 28l2-16-14 12z" fill="#F4B89A"/>
+            <path d="M18 26l-1-10 8 8z" fill="#F7A3C2"/>
+            <path d="M46 26l1-10-8 8z" fill="#F7A3C2"/>
+            <ellipse cx="24" cy="36" rx="2.4" ry="3.2" fill="#5C4452"/>
+            <ellipse cx="38" cy="36" rx="2.4" ry="3.2" fill="#5C4452"/>
+            <path d="M26 46h10" fill="none" stroke="#C98498" stroke-width="1.7" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <p id="task" class="task"></p>
+        <div id="answer" class="answer"></div>
+      </div>
+      <div class="pad" id="pad">
+        <div class="keys">
+          <button type="button" data-k="1">1</button>
+          <button type="button" data-k="2">2</button>
+          <button type="button" data-k="3">3</button>
+          <button type="button" data-k="4">4</button>
+          <button type="button" data-k="5">5</button>
+          <button type="button" data-k="6">6</button>
+          <button type="button" data-k="7">7</button>
+          <button type="button" data-k="8">8</button>
+          <button type="button" data-k="9">9</button>
+          <button type="button" class="back" data-k="bs" aria-label="стереть">
+            <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true">
+              <path d="M8.2 5.2h11a1.8 1.8 0 0 1 1.8 1.8v10a1.8 1.8 0 0 1-1.8 1.8h-11L3 12l5.2-6.8z" fill="none" stroke="#5C4450" stroke-width="1.8" stroke-linejoin="round"/>
+              <path d="M11 9.2l5.6 5.6M16.6 9.2 11 14.8" fill="none" stroke="#5C4450" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <button type="button" data-k="0">0</button>
+          <button type="button" class="enter" data-k="ok">Ввод</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="watch" hidden>
+      <div class="mascot" aria-hidden="true">
+        <svg viewBox="0 0 200 180"><use href="#cat"></use></svg>
+      </div>
+      <p id="empty-log" class="empty">пока нет</p>
+      <table class="log" id="log" hidden>
+        <thead>
+          <tr>
+            <th>когда</th>
+            <th>верных</th>
+            <th>неверных</th>
+          </tr>
+        </thead>
+        <tbody id="log-body"></tbody>
+      </table>
+      <div id="watch-chart" class="chart" hidden></div>
+      <button type="button" class="start" id="watch-start">
+        <svg class="inline-bow" viewBox="0 0 80 48" aria-hidden="true"><use href="#bow"></use></svg>
+        Начать тренировку
+      </button>
+    </section>
+
+    <section id="done" hidden>
+      <div class="mascot" aria-hidden="true">
+        <svg viewBox="0 0 200 180"><use href="#cat"></use></svg>
+      </div>
+      <div class="sheet">
+        <svg class="corner left" viewBox="0 0 80 48" aria-hidden="true"><use href="#bow"></use></svg>
+        <svg class="corner right" viewBox="0 0 80 48" aria-hidden="true"><use href="#bow"></use></svg>
+        <p id="result"></p>
+      </div>
+      <div id="done-chart" class="chart" hidden></div>
+      <button type="button" class="start" id="again">
+        <svg class="inline-bow" viewBox="0 0 80 48" aria-hidden="true"><use href="#bow"></use></svg>
+        Начать тренировку
+      </button>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
