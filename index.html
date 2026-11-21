@@ -72,14 +72,16 @@
   <main class="card">
     <svg class="card-bow" viewBox="0 0 80 48" aria-hidden="true"><use href="#bow"></use></svg>
 
-    <section id="who">
+    <section id="level">
       <div class="mascot" aria-hidden="true">
         <svg viewBox="0 0 200 180"><use href="#cat"></use></svg>
       </div>
-      <p class="ask">Я Злата?</p>
-      <div class="choices">
-        <button type="button" class="start" id="yes">Да</button>
-        <button type="button" class="start no" id="no">Нет</button>
+      <p class="ask">Выбери сложность</p>
+      <div class="levels">
+        <button type="button" class="level" data-level="1">1</button>
+        <button type="button" class="level" data-level="2">2</button>
+        <button type="button" class="level" data-level="3">3</button>
+        <button type="button" class="level" data-level="4">4</button>
       </div>
     </section>
 
@@ -91,7 +93,6 @@
         <svg class="inline-bow" viewBox="0 0 80 48" aria-hidden="true"><use href="#bow"></use></svg>
         Начать тренировку
       </button>
-      <div id="home-chart" class="chart" hidden></div>
     </section>
 
     <section id="count" hidden>
@@ -156,6 +157,8 @@
           <button type="button" data-k="7">7</button>
           <button type="button" data-k="8">8</button>
           <button type="button" data-k="9">9</button>
+          <button type="button" class="minus" data-k="minus" hidden>−</button>
+          <button type="button" class="comma" data-k="comma" hidden>,</button>
           <button type="button" class="back" data-k="bs" aria-label="стереть">
             <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true">
               <path d="M8.2 5.2h11a1.8 1.8 0 0 1 1.8 1.8v10a1.8 1.8 0 0 1-1.8 1.8h-11L3 12l5.2-6.8z" fill="none" stroke="#5C4450" stroke-width="1.8" stroke-linejoin="round"/>
@@ -168,28 +171,6 @@
       </div>
     </section>
 
-    <section id="watch" hidden>
-      <div class="mascot" aria-hidden="true">
-        <svg viewBox="0 0 200 180"><use href="#cat"></use></svg>
-      </div>
-      <p id="empty-log" class="empty">пока нет</p>
-      <table class="log" id="log" hidden>
-        <thead>
-          <tr>
-            <th>когда</th>
-            <th>верных</th>
-            <th>неверных</th>
-          </tr>
-        </thead>
-        <tbody id="log-body"></tbody>
-      </table>
-      <div id="watch-chart" class="chart" hidden></div>
-      <button type="button" class="start" id="watch-start">
-        <svg class="inline-bow" viewBox="0 0 80 48" aria-hidden="true"><use href="#bow"></use></svg>
-        Начать тренировку
-      </button>
-    </section>
-
     <section id="done" hidden>
       <div class="mascot" aria-hidden="true">
         <svg viewBox="0 0 200 180"><use href="#cat"></use></svg>
@@ -199,7 +180,6 @@
         <svg class="corner right" viewBox="0 0 80 48" aria-hidden="true"><use href="#bow"></use></svg>
         <p id="result"></p>
       </div>
-      <div id="done-chart" class="chart" hidden></div>
       <button type="button" class="start" id="again">
         <svg class="inline-bow" viewBox="0 0 80 48" aria-hidden="true"><use href="#bow"></use></svg>
         Начать тренировку

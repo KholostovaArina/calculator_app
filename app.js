@@ -1,9 +1,8 @@
-const KEY = "ustny-schet-zlata";
 const SOUND_KEY = "ustny-schet-sound";
+const MINUS = "−";
 
-const who = document.getElementById("who");
+const levelScreen = document.getElementById("level");
 const home = document.getElementById("home");
-const watch = document.getElementById("watch");
 const count = document.getElementById("count");
 const play = document.getElementById("play");
 const done = document.getElementById("done");
@@ -17,12 +16,9 @@ const answerEl = document.getElementById("answer");
 const stage = document.getElementById("stage");
 const stamp = document.getElementById("stamp");
 const resultEl = document.getElementById("result");
-const homeChart = document.getElementById("home-chart");
-const doneChart = document.getElementById("done-chart");
-const watchChart = document.getElementById("watch-chart");
-const logTable = document.getElementById("log");
-const logBody = document.getElementById("log-body");
-const emptyLog = document.getElementById("empty-log");
+const keys = document.querySelector(".keys");
+const minusKey = document.querySelector(".minus");
+const commaKey = document.querySelector(".comma");
 const soundButton = document.getElementById("sound");
 
 const audio = {
@@ -31,8 +27,8 @@ const audio = {
 };
 
 const state = {
-  phase: "who",
-  role: "",
+  phase: "level",
+  level: 1,
   ok: 0,
   bad: 0,
   answer: "",
@@ -45,36 +41,11 @@ const state = {
   finished: false
 };
 
-function load() {
-  try {
-    const data = JSON.parse(localStorage.getItem(KEY) || "[]");
-    if (!Array.isArray(data)) return [];
-    return data.filter(function (row) {
-      return row && Number.isFinite(row.ok) && Number.isFinite(row.bad);
-    });
-  } catch (err) {
-    return [];
-  }
-}
-
-function save(row) {
-  const rows = load();
-  rows.push(row);
-  const trimmed = rows.slice(-40);
-  try {
-    localStorage.setItem(KEY, JSON.stringify(trimmed));
-  } catch (err) {
-    return rows;
-  }
-  return trimmed;
-}
-
 function setPhase(phase) {
   state.phase = phase;
   document.body.className = "phase-" + phase;
-  who.hidden = phase !== "who";
+  levelScreen.hidden = phase !== "level";
   home.hidden = phase !== "home";
-  watch.hidden = phase !== "watch";
   count.hidden = phase !== "count";
   play.hidden = phase !== "play";
   done.hidden = phase !== "done";
@@ -171,74 +142,107 @@ function paintSound() {
   soundButton.querySelector(".sound-off").hidden = !audio.muted;
 }
 
-function whenLabel(ts) {
-  const date = new Date(ts);
-  const pad = function (value) { return String(value).padStart(2, "0"); };
-  return pad(date.getDate()) + "." + pad(date.getMonth() + 1) + " " + pad(date.getHours()) + ":" + pad(date.getMinutes());
-}
-
-function renderLog(rows) {
-  logBody.replaceChildren();
-  if (!rows.length) {
-    logTable.hidden = true;
-    emptyLog.hidden = false;
-    return;
-  }
-  emptyLog.hidden = true;
-  logTable.hidden = false;
-  rows.slice().reverse().forEach(function (row) {
-    const tr = document.createElement("tr");
-    const when = document.createElement("td");
-    const ok = document.createElement("td");
-    const bad = document.createElement("td");
-    when.textContent = whenLabel(row.at);
-    ok.textContent = String(row.ok);
-    ok.className = "ok";
-    bad.textContent = String(row.bad);
-    bad.className = "bad";
-    tr.append(when, ok, bad);
-    logBody.append(tr);
-  });
-}
-
-function showZlataHome() {
-  const rows = load();
-  renderChart(homeChart, rows, "home");
-  setPhase("home");
-}
-
-function showWatch() {
-  const rows = load();
-  renderLog(rows);
-  renderChart(watchChart, rows, "watch");
-  setPhase("watch");
-}
-
 function rand(min, max) {
   return min + Math.floor(Math.random() * (max - min + 1));
 }
 
-function makeProblem() {
-  let text = "12 − 8";
-  let answer = 4;
-  for (let i = 0; i < 12; i += 1) {
-    if (Math.random() < 0.5) {
-      const a = rand(4, 14);
-      const room = 20 - a;
-      if (room < 3) continue;
-      const b = rand(3, room);
-      if (a + b < 8) continue;
-      text = a + " + " + b;
-      answer = a + b;
-    } else {
-      const a = rand(10, 18);
-      const b = rand(3, Math.min(9, a - 2));
-      text = a + " − " + b;
-      answer = a - b;
-    }
-    if (!state.problem || text !== state.problem.text) break;
+function formatTenth(tenths) {
+  const whole = Math.floor(tenths / 10);
+  const frac = tenths % 10;
+  return whole + "," + frac;
+}
+
+function twoOrThree() {
+  return Math.random() < 0.5 ? rand(10, 99) : rand(100, 999);
+}
+
+function makeLevel1() {
+  if (Math.random() < 0.5) {
+    const a = rand(4, 14);
+    const room = 20 - a;
+    if (room < 3) return null;
+    const b = rand(3, room);
+    if (a + b < 8) return null;
+    return { text: a + " + " + b, answer: a + b };
   }
-  return { text: text, answer: answer };
+  const a = rand(10, 18);
+  const b = rand(3, Math.min(9, a - 2));
+  return { text: a + " − " + b, answer: a - b };
+}
+
+function makeLevel2() {
+  const kind = rand(1, 3);
+  if (kind === 1) {
+    const a = rand(1, 12);
+    const b = rand(a + 1, a + 12);
+    return { text: a + " − " + b, answer: a - b };
+  }
+  if (kind === 2) {
+    const a = rand(1, 12);
+    const b = rand(1, 12);
+    return { text: MINUS + a + " + " + b, answer: b - a };
+  }
+  const a = rand(1, 9);
+  const b = rand(1, 9);
+  return { text: MINUS + a + " − " + b, answer: -(a + b) };
+}
+
+function makeLevel3() {
+  if (Math.random() < 0.5) {
+    if (Math.random() < 0.5) {
+      const a = twoOrThree();
+      const b = twoOrThree();
+      return { text: a + " + " + b, answer: a + b };
+    }
+    let a = twoOrThree();
+    let b = twoOrThree();
+    if (b > a) {
+      const swap = a;
+      a = b;
+      b = swap;
+    }
+    if (a === b) b = Math.max(10, a - rand(1, 9));
+    return { text: a + " − " + b, answer: a - b };
+  }
+  const kind = rand(1, 3);
+  if (kind === 1) {
+    const a = twoOrThree();
+    const b = a + rand(10, 250);
+    return { text: a + " − " + b, answer: a - b };
+  }
+  if (kind === 2) {
+    const a = twoOrThree();
+    const b = twoOrThree();
+    return { text: MINUS + a + " + " + b, answer: b - a };
+  }
+  const a = rand(10, 99);
+  const b = rand(10, 99);
+  return { text: MINUS + a + " − " + b, answer: -(a + b) };
+}
+
+function makeLevel4() {
+  const a = rand(1, 99);
+  const b = rand(1, 99);
+  if (Math.random() < 0.5) {
+    return { text: formatTenth(a) + " + " + formatTenth(b), answer: a + b, decimal: true };
+  }
+  const big = Math.max(a, b);
+  const small = Math.min(a, b);
+  if (big === small) return null;
+  return { text: formatTenth(big) + " − " + formatTenth(small), answer: big - small, decimal: true };
+}
+
+function makeProblem() {
+  let problem = null;
+  for (let i = 0; i < 12; i += 1) {
+    if (state.level === 1) problem = makeLevel1();
+    else if (state.level === 2) problem = makeLevel2();
+    else if (state.level === 3) problem = makeLevel3();
+    else problem = makeLevel4();
+    if (!problem) continue;
+    if (!state.problem || problem.text !== state.problem.text) break;
+  }
+  return problem || { text: "12 − 8", answer: 4 };
 }
 
 function renderAnswer() {
@@ -275,10 +279,18 @@ function nextProblem() {
   state.problem = makeProblem();
   state.answer = "";
   taskEl.textContent = state.problem.text;
+  taskEl.classList.toggle("long", state.level >= 3 || state.problem.text.length > 8);
   renderAnswer();
   stage.classList.remove("good", "bad");
   stamp.hidden = true;
   stamp.classList.remove("good", "bad");
+}
+
+function applyKeys() {
+  const extra = state.level === 2 || state.level === 3 || state.level === 4;
+  minusKey.hidden = state.level !== 2 && state.level !== 3;
+  commaKey.hidden = state.level !== 4;
+  keys.classList.toggle("has-extra", extra);
 }
 
 function beginPlay() {
@@ -287,6 +299,7 @@ function beginPlay() {
   state.lock = false;
   state.finished = false;
   updateScores();
+  applyKeys();
   nextProblem();
   setPhase("play");
   state.endAt = Date.now() + 60000;
@@ -325,9 +338,6 @@ function finish() {
   if (state.finished) return;
   state.finished = true;
   clearTimers();
-  const rows = state.role === "zlata"
-    ? save({ ok: state.ok, bad: state.bad, at: Date.now() })
-    : load();
   const lead = document.createElement("span");
   lead.className = "lead";
   lead.textContent = "ТЫ МОЛОДЕЦ";
@@ -344,15 +354,6 @@ function finish() {
   badBit.append(numberEl(state.bad, "n-bad"), document.createTextNode("неверных ответов"));
   line.append(okBit, and, badBit);
   resultEl.replaceChildren(lead, line);
-  if (state.role === "zlata") {
-    renderChart(doneChart, rows, "done");
-    renderChart(homeChart, rows, "home");
-  } else {
-    doneChart.hidden = true;
-    doneChart.replaceChildren();
-  }
-  renderChart(watchChart, rows, "watch");
-  renderLog(rows);
   playFanfare();
   setPhase("done");
 }
@@ -364,29 +365,87 @@ function numberEl(value, className) {
   return node;
 }
 
+function signedBody() {
+  const negative = state.answer.startsWith(MINUS);
+  return { negative: negative, body: negative ? state.answer.slice(1) : state.answer };
+}
+
+function writeAnswer(negative, body) {
+  state.answer = negative ? MINUS + body : body;
+  renderAnswer();
+}
+
 function typeDigit(digit) {
   if (state.phase !== "play" || state.lock) return;
-  if (state.answer.length >= 2) return;
-  state.answer += digit;
-  renderAnswer();
+  const parts = signedBody();
+  let body = parts.body;
+  if (state.level === 4) {
+    const bits = body.split(",");
+    if (bits.length === 1) {
+      if (bits[0].length >= 2) return;
+      body += digit;
+    } else if (bits[1].length >= 1) {
+      return;
+    } else {
+      body = bits[0] + "," + digit;
+    }
+  } else {
+    const max = state.level === 3 ? 4 : 2;
+    if (body.length >= max) return;
+    body += digit;
+  }
+  writeAnswer(parts.negative, body);
+  playTap();
+}
+
+function typeComma() {
+  if (state.phase !== "play" || state.lock || state.level !== 4) return;
+  const parts = signedBody();
+  if (parts.body.includes(",")) return;
+  const body = (parts.body === "" ? "0" : parts.body) + ",";
+  writeAnswer(false, body);
+  playTap();
+}
+
+function toggleSign() {
+  if (state.phase !== "play" || state.lock) return;
+  if (state.level !== 2 && state.level !== 3) return;
+  const parts = signedBody();
+  writeAnswer(!parts.negative, parts.body);
   playTap();
 }
 
 function backspace() {
   if (state.phase !== "play" || state.lock) return;
-  state.answer = state.answer.slice(0, -1);
+  const parts = signedBody();
+  if (parts.body.length > 0) writeAnswer(parts.negative, parts.body.slice(0, -1));
+  else state.answer = "";
   renderAnswer();
+}
+
+function readAnswer(text) {
+  if (!text || text === MINUS || text === "," || text === MINUS + ",") return null;
+  const norm = text.split(MINUS).join("-").replace(",", ".");
+  if (!/^-?\d+(\.\d+)?$/.test(norm)) return null;
+  const value = Number(norm);
+  return Number.isFinite(value) ? value : null;
+}
+
+function sameAnswer(value) {
+  if (state.problem.decimal) return Math.round(value * 10) === state.problem.answer;
+  return value === state.problem.answer;
 }
 
 function submit() {
   if (state.phase !== "play" || state.lock) return;
-  if (state.answer === "") return;
+  const value = readAnswer(state.answer);
+  if (value === null) return;
   if (Date.now() >= state.endAt) {
     finish();
     return;
   }
   state.lock = true;
-  const good = Number(state.answer) === state.problem.answer;
+  const good = sameAnswer(value);
   if (good) state.ok += 1;
   else state.bad += 1;
   updateScores();
@@ -415,6 +474,8 @@ document.getElementById("pad").addEventListener("click", function (event) {
   const key = button.dataset.k;
   if (key === "bs") backspace();
   else if (key === "ok") submit();
+  else if (key === "minus") toggleSign();
+  else if (key === "comma") typeComma();
   else typeDigit(key);
   button.blur();
 });
@@ -427,6 +488,12 @@ window.addEventListener("keydown", function (event) {
   } else if (event.key === "Backspace") {
     event.preventDefault();
     backspace();
+  } else if (event.key === "-" || event.key === MINUS) {
+    event.preventDefault();
+    toggleSign();
+  } else if (event.key === "," || event.key === ".") {
+    event.preventDefault();
+    typeComma();
   } else if (event.key === "Enter") {
     if (event.repeat) return;
     event.preventDefault();
@@ -434,21 +501,16 @@ window.addEventListener("keydown", function (event) {
   }
 });
 
-document.getElementById("yes").addEventListener("click", function () {
-  state.role = "zlata";
-  showZlataHome();
-});
-
-document.getElementById("no").addEventListener("click", function () {
-  state.role = "teacher";
-  showWatch();
+document.querySelector(".levels").addEventListener("click", function (event) {
+  const button = event.target.closest("button");
+  if (!button) return;
+  state.level = Number(button.dataset.level);
+  setPhase("home");
 });
 
 document.getElementById("start").addEventListener("click", startCountdown);
-document.getElementById("watch-start").addEventListener("click", startCountdown);
 document.getElementById("again").addEventListener("click", function () {
-  if (state.role === "teacher") showWatch();
-  else startCountdown();
+  setPhase("level");
 });
 
 soundButton.addEventListener("click", function () {
@@ -462,69 +524,5 @@ soundButton.addEventListener("click", function () {
   if (!audio.muted) ensureAudio();
 });
 
-function renderChart(el, rows, id) {
-  if (!rows || rows.length < 2) {
-    el.hidden = true;
-    el.replaceChildren();
-    return;
-  }
-  el.hidden = false;
-  const shown = rows.slice(-12);
-  const width = 640;
-  const height = 248;
-  const padL = 32;
-  const padR = 32;
-  const padT = 36;
-  const padB = 36;
-  const max = Math.max.apply(null, shown.map(function (row) { return row.ok; }).concat(1));
-  const count = shown.length;
-  const innerW = width - padL - padR;
-  const innerH = height - padT - padB;
-  const base = padT + innerH;
-  const points = shown.map(function (row, index) {
-    const x = count === 1 ? padL + innerW / 2 : padL + (index / (count - 1)) * innerW;
-    const y = base - (row.ok / max) * (innerH - 8);
-    return {
-      x: x,
-      y: y,
-      ok: row.ok,
-      index: rows.length - count + index + 1
-    };
-  });
-  const line = points.map(function (point, index) {
-    return (index ? "L" : "M") + point.x.toFixed(1) + " " + point.y.toFixed(1);
-  }).join(" ");
-  const area = line
-    + " L " + points[points.length - 1].x.toFixed(1) + " " + base
-    + " L " + points[0].x.toFixed(1) + " " + base + " Z";
-  const dots = points.map(function (point) {
-    return '<text x="' + point.x.toFixed(1) + '" y="' + (point.y - 12).toFixed(1)
-      + '" text-anchor="middle" font-size="15" font-weight="800" fill="#6E4E5C">' + point.ok + "</text>"
-      + '<circle cx="' + point.x.toFixed(1) + '" cy="' + point.y.toFixed(1)
-      + '" r="6" fill="#fff" stroke="#E58AAB" stroke-width="3"/>'
-      + '<text x="' + point.x.toFixed(1) + '" y="' + (base + 22).toFixed(1)
-      + '" text-anchor="middle" font-size="12" font-weight="700" fill="#C9A8B6">' + point.index + "</text>";
-  }).join("");
-
-  el.replaceChildren();
-  const label = document.createElement("p");
-  label.className = "chart-label";
-  label.textContent = "верных";
-  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  svg.setAttribute("viewBox", "0 0 " + width + " " + height);
-  svg.setAttribute("role", "img");
-  svg.setAttribute("aria-label", "верных");
-  svg.setAttribute("font-family", "Nunito, Segoe UI, sans-serif");
-  svg.innerHTML = '<defs><linearGradient id="area-' + id + '" x1="0" y1="0" x2="0" y2="1">'
-    + '<stop offset="0%" stop-color="#F6C6D8" stop-opacity="0.9"/>'
-    + '<stop offset="100%" stop-color="#F6C6D8" stop-opacity="0.02"/>'
-    + "</linearGradient></defs>"
-    + '<path d="' + area + '" fill="url(#area-' + id + ')"/>'
-    + '<path d="' + line + '" fill="none" stroke="#E989AB" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/>'
-    + '<line x1="' + padL + '" y1="' + base + '" x2="' + (width - padR) + '" y2="' + base + '" stroke="#F3D5DE" stroke-width="2"/>'
-    + dots;
-  el.append(label, svg);
-}
-
 paintSound();
-setPhase("who");
+setPhase("level");
