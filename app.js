@@ -548,7 +548,14 @@ document.getElementById("name-form").addEventListener("submit", function (event)
     enterAs(STUDENTS[3]);
     return;
   }
-  const found = { света: STUDENTS[0], вера: STUDENTS[1], ваня: STUDENTS[4], тест: STUDENTS[5] }[raw];
+  const found = {
+    света: STUDENTS[0],
+    светлана: STUDENTS[0],
+    вера: STUDENTS[1],
+    ваня: STUDENTS[4],
+    иван: STUDENTS[4],
+    тест: STUDENTS[5]
+  }[raw];
   if (!found) {
     nameError.hidden = false;
     return;
