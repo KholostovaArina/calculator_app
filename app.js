@@ -521,7 +521,12 @@ window.addEventListener("keydown", function (event) {
 });
 
 function normName(value) {
-  return String(value || "").trim().replace(/\s+/g, " ").toLowerCase().replace(/ё/g, "е");
+  return String(value || "")
+    .replace(/[\u200B-\u200D\uFEFF]/g, "")
+    .trim()
+    .replace(/\s+/g, " ")
+    .toLowerCase()
+    .replace(/ё/g, "е");
 }
 
 function enterAs(user) {
