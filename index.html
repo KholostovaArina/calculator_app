@@ -72,7 +72,31 @@
   <main class="card">
     <svg class="card-bow" viewBox="0 0 80 48" aria-hidden="true"><use href="#bow"></use></svg>
 
-    <section id="level">
+    <section id="greet">
+      <div class="mascot" aria-hidden="true">
+        <svg viewBox="0 0 200 180"><use href="#cat"></use></svg>
+      </div>
+      <p class="ask talk">Давай познакомимся, как тебя зовут?</p>
+      <form class="hello" id="name-form">
+        <input id="name-input" type="text" autocomplete="name" enterkeyhint="done" maxlength="40">
+        <p id="name-error" class="oops" hidden>Ой, я не знаю такую</p>
+        <button type="submit" class="start">Дальше</button>
+      </form>
+    </section>
+
+    <section id="family" hidden>
+      <div class="mascot" aria-hidden="true">
+        <svg viewBox="0 0 200 180"><use href="#cat"></use></svg>
+      </div>
+      <p class="ask talk">А какая у тебя фамилия?</p>
+      <form class="hello" id="family-form">
+        <input id="family-input" type="text" autocomplete="family-name" enterkeyhint="done" maxlength="40">
+        <p id="family-error" class="oops" hidden>Ой, я не знаю такую</p>
+        <button type="submit" class="start">Дальше</button>
+      </form>
+    </section>
+
+    <section id="level" hidden>
       <div class="mascot" aria-hidden="true">
         <svg viewBox="0 0 200 180"><use href="#cat"></use></svg>
       </div>
@@ -184,9 +208,11 @@
         <svg class="inline-bow" viewBox="0 0 80 48" aria-hidden="true"><use href="#bow"></use></svg>
         Начать тренировку
       </button>
+      <button type="button" class="exit" id="exit">Выйти</button>
     </section>
   </main>
 
+  <script src="store.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

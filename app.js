@@ -1,6 +1,8 @@
 const SOUND_KEY = "ustny-schet-sound";
 const MINUS = "−";
 
+const greet = document.getElementById("greet");
+const family = document.getElementById("family");
 const levelScreen = document.getElementById("level");
 const home = document.getElementById("home");
 const count = document.getElementById("count");
@@ -20,6 +22,10 @@ const keys = document.querySelector(".keys");
 const minusKey = document.querySelector(".minus");
 const commaKey = document.querySelector(".comma");
 const soundButton = document.getElementById("sound");
+const nameInput = document.getElementById("name-input");
+const nameError = document.getElementById("name-error");
+const familyInput = document.getElementById("family-input");
+const familyError = document.getElementById("family-error");
 
 const audio = {
   ctx: null,
@@ -27,7 +33,8 @@ const audio = {
 };
 
 const state = {
-  phase: "level",
+  phase: "greet",
+  user: null,
   level: 1,
   ok: 0,
   bad: 0,
@@ -44,6 +51,8 @@ const state = {
 function setPhase(phase) {
   state.phase = phase;
   document.body.className = "phase-" + phase;
+  greet.hidden = phase !== "greet";
+  family.hidden = phase !== "family";
   levelScreen.hidden = phase !== "level";
   home.hidden = phase !== "home";
   count.hidden = phase !== "count";
@@ -354,6 +363,16 @@ function finish() {
   badBit.append(numberEl(state.bad, "n-bad"), document.createTextNode("неверных ответов"));
   line.append(okBit, and, badBit);
   resultEl.replaceChildren(lead, line);
+  if (state.user) {
+    rememberResult({
+      user: state.user.id,
+      name: state.user.name,
+      level: state.level,
+      ok: state.ok,
+      bad: state.bad,
+      at: Date.now()
+    });
+  }
   playFanfare();
   setPhase("done");
 }
@@ -501,6 +520,54 @@ window.addEventListener("keydown", function (event) {
   }
 });
 
+function normName(value) {
+  return String(value || "").trim().replace(/\s+/g, " ").toLowerCase().replace(/ё/g, "е");
+}
+
+function enterAs(user) {
+  state.user = user;
+  setPhase("level");
+}
+
+document.getElementById("name-form").addEventListener("submit", function (event) {
+  event.preventDefault();
+  const raw = normName(nameInput.value);
+  nameError.hidden = true;
+  if (raw === "злата") {
+    familyInput.value = "";
+    familyError.hidden = true;
+    setPhase("family");
+    familyInput.focus();
+    return;
+  }
+  if (raw === "злата попова") {
+    enterAs(STUDENTS[2]);
+    return;
+  }
+  if (raw === "злата касимова") {
+    enterAs(STUDENTS[3]);
+    return;
+  }
+  const found = { света: STUDENTS[0], вера: STUDENTS[1], ваня: STUDENTS[4], тест: STUDENTS[5] }[raw];
+  if (!found) {
+    nameError.hidden = false;
+    return;
+  }
+  enterAs(found);
+});
+
+document.getElementById("family-form").addEventListener("submit", function (event) {
+  event.preventDefault();
+  const raw = normName(familyInput.value);
+  familyError.hidden = true;
+  if (raw === "попова") enterAs(STUDENTS[2]);
+  else if (raw === "касимова") enterAs(STUDENTS[3]);
+  else familyError.hidden = false;
+});
+
+nameInput.addEventListener("input", function () { nameError.hidden = true; });
+familyInput.addEventListener("input", function () { familyError.hidden = true; });
+
 document.querySelector(".levels").addEventListener("click", function (event) {
   const button = event.target.closest("button");
   if (!button) return;
@@ -511,6 +578,16 @@ document.querySelector(".levels").addEventListener("click", function (event) {
 document.getElementById("start").addEventListener("click", startCountdown);
 document.getElementById("again").addEventListener("click", function () {
   setPhase("level");
+});
+
+document.getElementById("exit").addEventListener("click", function () {
+  state.user = null;
+  nameInput.value = "";
+  familyInput.value = "";
+  nameError.hidden = true;
+  familyError.hidden = true;
+  setPhase("greet");
+  nameInput.focus();
 });
 
 soundButton.addEventListener("click", function () {
@@ -525,4 +602,5 @@ soundButton.addEventListener("click", function () {
 });
 
 paintSound();
-setPhase("level");
+setPhase("greet");
+nameInput.focus();
