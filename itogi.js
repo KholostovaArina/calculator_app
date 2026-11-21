@@ -117,8 +117,21 @@ function renderStudent(student, rows) {
 }
 
 const board = document.getElementById("board");
-const rows = loadResults().slice().sort(function (a, b) { return a.at - b.at; });
-STUDENTS.forEach(function (student) {
-  const own = rows.filter(function (row) { return row.user === student.id; });
-  board.append(renderStudent(student, own));
+
+function paint(rows) {
+  board.replaceChildren();
+  STUDENTS.forEach(function (student) {
+    const own = rows.filter(function (row) { return row.user === student.id; });
+    board.append(renderStudent(student, own));
+  });
+}
+
+const localRows = loadResults();
+loadCloud().then(function (cloud) {
+  if (!cloud) {
+    paint(localRows.slice().sort(function (a, b) { return a.at - b.at; }));
+    return;
+  }
+  shareMissing(cloud, localRows);
+  paint(mergeResults(cloud, localRows));
 });
